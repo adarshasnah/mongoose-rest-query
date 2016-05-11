@@ -11,7 +11,10 @@ module.exports = function (ModelName) {
     function isFilterDependent(req) {
         var Model = getModel(req);
 
-        return _.indexOf(Object.keys(Model.schema.paths), req.filter.field) > -1;
+        if (req.filter)
+            return _.indexOf(Object.keys(Model.schema.paths), req.filter.field) > -1;
+
+        return false;
     }
 
     function getFilterValue(req) {

@@ -24,7 +24,7 @@ module.exports = function (schema, modelName) {
     for (var x = 0; x < schemaFields.length; x++) {
         if (schema.path(schemaFields[x]).instance == 'Array') {
 
-            var resource = '/:id/' + schemaFields[x].toLowerCase() + 's';
+            var resource = '/:id/' + schemaFields[x].toLowerCase();
             var subController = require('./controller/controller.sub')(modelName, schemaFields[x]);
 
             router.use(resource, subController.setModel);
@@ -51,7 +51,7 @@ module.exports = function (schema, modelName) {
 
                     if (childPaths[childFields[y]].instance == 'Array') {
 
-                        var childResource = resource + '/:itemId/' + childFields[y].toLowerCase() + 's';
+                        var childResource = resource + '/:itemId/' + childFields[y].toLowerCase();
                         var childController = require('./controller/controller.sub.child')(modelName, schemaFields[x], childFields[y]);
 
                         router.use(childResource, childController.set);
