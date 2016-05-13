@@ -18,7 +18,11 @@ module.exports = function (ModelName) {
     }
 
     function getFilterValue(req) {
-        return req.filter.value || null;
+
+        if (req.filter)
+            return req.filter.value || null;
+
+        return null;
     }
 
     function applyDefaultFilter(req, query) {
