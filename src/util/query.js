@@ -36,10 +36,10 @@ module.exports = function () {
                 select = getSelect(query[field]);
 
             if (field.toString().toLowerCase() == 'limit')
-                limit = query[field];
+                limit = parseInt(query[field]);
 
             if (field.toString().toLowerCase() == 'skip')
-                skip = query[field];
+                skip = parseInt(query[field]);
 
             if (field.toString().toLowerCase() == 'populate')
                 populate = query[field].replace(/,/g, " ");
