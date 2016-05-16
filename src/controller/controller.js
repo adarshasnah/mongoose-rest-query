@@ -84,47 +84,25 @@ module.exports = function (ModelName) {
         var isDependent = isFilterDependent(req);
         var filterValue = getFilterValue(req);
 
-        function save(data) {
-            var model = new Model(data);
-
-            if (isDependent)
-                model[req.filter.field] = filterValue;
-
-            model.save();
-            return model;
-        }
-
-        if (_.isArray(req.body)) {
-
-            var out = [];
-
-            for (var x = 0; x < req.body.length; x++) {
-                out.push(save(req.body[x]));
+        if (isDependent) {
+            if (_.isArray(req.body)) {
+                for (var x = 0; x < req.body.length; x++)
+                    req.body[x][req.filter.field] = filterValue;
+            } else {
+                req.body[req.filter.field] = filterValue;
             }
-
-            res.status(201).send(out);
-
-        } else {
-
-            var model = new Model(req.body);
-
-            if (isDependent)
-                model[req.filter.field] = filterValue;
-
-            model.save(function (err, data) {
-
-                Model.findById(data.id, function (err, m) {
-                    if (err)
-                        res.status(500).send(err);
-                    else {
-                        res.status(201).send(m);
-                    }
-                });
-            });
         }
+
+        Model.create(req.body, function (err, data) {
+            if (err)
+                res.status(500).send(err);
+            else
+                res.status(201).send(data);
+
+        });
     };
 
-    var set = function (req, res, next) {
+    var get = function (req, res) {
         var Model = getModel(req);
 
         var query = {};
@@ -141,61 +119,46 @@ module.exports = function (ModelName) {
                 if (err)
                     res.status(500).send(err);
                 else if (data) {
-                    req.model = data;
-                    next();
+                    res.status(200).send(data);
                 } else {
                     res.status(404).send('Not found');
                 }
             });
     };
 
-    var get = function (req, res) {
-        res.json(req.model);
-    };
-
     var update = function (req, res) {
 
         var Model = getModel(req);
 
-        if (req.params.id) {
+        var option = {
+            new: true
+        };
 
-            if (req.body._id)
-                delete req.body._id;
+        delete req.body._id;
+        delete req.body.id;
 
-            for (var p in req.body) {
-                if (req.body[p] == 'null')
-                    req.model[p] = null;
-                else
-                    req.model[p] = req.body[p];
+        Model.findByIdAndUpdate(req.params.id, req.body, option, function (err, data) {
+            if (err)
+                res.status(500).send(err);
+            else {
+                res.status(201).send(data);
             }
+        });
 
-            req.model.save(function (err, data) {
-                if (err)
-                    res.status(500).send(err);
-                else {
-                    Model.findById(data.id, function (err, m) {
-                        if (err)
-                            res.status(500).send(err);
-                        else {
-                            res.status(201).send(m);
-                        }
-                    });
-                }
-            });
-        }
     };
 
     var deleteById = function (req, res) {
 
-        if (req.params.id) {
-            req.model.remove(function (err) {
-                if (err)
-                    res.status(500).send(err);
-                else {
-                    res.status(204).send('Deleted');
-                }
-            });
-        }
+        var Model = getModel(req);
+
+        Model.findByIdAndRemove(req.params.id, function (err) {
+            if (err)
+                res.status(500).send(err);
+            else {
+                res.status(204).send('Deleted');
+            }
+        });
+
     };
 
     var remove = function (req, res) {
@@ -230,7 +193,6 @@ module.exports = function (ModelName) {
         count: count,
         create: create,
         get: get,
-        set: set,
         update: update,
         deleteById: deleteById,
         remove: remove

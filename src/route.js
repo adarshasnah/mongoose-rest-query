@@ -12,8 +12,6 @@ module.exports = function (schema, modelName) {
     router.route('/count')
         .get(mainController.count);
 
-    router.use('/:id', mainController.set);
-
     router.route('/:id')
         .get(mainController.get)
         .put(mainController.update)
