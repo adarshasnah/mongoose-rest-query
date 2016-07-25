@@ -130,7 +130,35 @@ module.exports = function (ModelName) {
 
         var Model = getModel(req);
 
-        var option = {
+        Model.findById(req.params.id, function (err, model) {
+
+            for (var p in req.body) {
+                if (req.body[p] == 'null')
+                    model[p] = null;
+                else
+                    model[p] = req.body[p];
+            }
+
+
+            model.save(function (err, data) {
+                if (err)
+                    res.status(500).send(err);
+                else {
+                    Model.findById(data.id, function (err, m) {
+                        if (err)
+                            res.status(500).send(err);
+                        else {
+                            res.status(201).send(m);
+                        }
+                    });
+                }
+            });
+
+        });
+
+        //methods below do not trigger hook pre
+
+        /*var option = {
             new: true
         };
 
@@ -143,7 +171,7 @@ module.exports = function (ModelName) {
             else {
                 res.status(201).send(data);
             }
-        });
+        });*/
 
     };
 
