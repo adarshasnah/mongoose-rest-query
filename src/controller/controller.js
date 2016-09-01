@@ -1,33 +1,10 @@
 module.exports = function (ModelName) {
 
-    var _ = require('lodash'),
-        model = require('../util/model').model,
+    var model = require('../util/model').model,
         getQuery = require('../').getQuery;
 
     function getModel(req) {
         return model(req, ModelName);
-    }
-
-    function isFilterDependent(req) {
-        var Model = getModel(req);
-
-        if (req.filter)
-            return _.indexOf(Object.keys(Model.schema.paths), req.filter.field) > -1;
-
-        return false;
-    }
-
-    function getFilterValue(req) {
-
-        if (req.filter)
-            return req.filter.value || null;
-
-        return null;
-    }
-
-    function applyDefaultFilter(req, query) {
-        if (isFilterDependent(req))
-            query.filter[req.filter.field] = getFilterValue(req);
     }
 
     var list = function (req, res) {
@@ -38,8 +15,6 @@ module.exports = function (ModelName) {
         if (req.query) {
             query = getQuery(req.query, Object.keys(Model.schema.paths));
         }
-
-        applyDefaultFilter(req, query);
 
         Model
             .find(query.filter)
@@ -67,8 +42,6 @@ module.exports = function (ModelName) {
             query = getQuery(req.query, Object.keys(Model.schema.paths));
         }
 
-        applyDefaultFilter(req, query);
-
         Model.count(query.filter, function (err, data) {
             if (err)
                 res.status(500).send(err);
@@ -80,18 +53,6 @@ module.exports = function (ModelName) {
 
     var create = function (req, res) {
         var Model = getModel(req);
-
-        var isDependent = isFilterDependent(req);
-        var filterValue = getFilterValue(req);
-
-        if (isDependent) {
-            if (_.isArray(req.body)) {
-                for (var x = 0; x < req.body.length; x++)
-                    req.body[x][req.filter.field] = filterValue;
-            } else {
-                req.body[req.filter.field] = filterValue;
-            }
-        }
 
         Model.create(req.body, function (err, data) {
             if (err)
@@ -202,8 +163,6 @@ module.exports = function (ModelName) {
         if (req.query) {
             query = getQuery(req.query, Object.keys(Model.schema.paths));
         }
-
-        applyDefaultFilter(req, query);
 
 
         Model.remove(query.filter, function (err) {
