@@ -1,8 +1,9 @@
-module.exports = function (schema, modelName) {
+module.exports = function (modelName) {
 
-    var express = require('express');
-    var router = express.Router();
-    var mainController = require('./controller/controller')(modelName);
+    var express = require('express'),
+        router = express.Router(),
+        mainController = require('./controller/controller')(modelName),
+        schema = require('./config').modelSchemas[modelName];
 
     router.route('/')
         .get(mainController.list)

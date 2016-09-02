@@ -1,6 +1,5 @@
 var mongoose = require('mongoose'),
-    autoNumber = require('mongoose-auto-number'),
-    _ = require('lodash');
+    autoNumber = require('mongoose-auto-number');
 
 module.exports = function () {
 
@@ -8,10 +7,10 @@ module.exports = function () {
 
     function mapModels(db) {
 
-        var schemas = require('./config').schemas;
+        var modelSchemas = require('./config').modelSchemas;
 
-        Object.keys(schemas).map(function (item) {
-            db.model(_.upperFirst(item), schemas[item]);
+        Object.keys(modelSchemas).map(function (item) {
+            db.model(item, modelSchemas[item]);
         });
 
         autoNumber.init(db);
