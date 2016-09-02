@@ -11,7 +11,7 @@ module.exports = function () {
         var schemas = require('./config').schemas;
 
         Object.keys(schemas).map(function (item) {
-            db.model(_.capitalize(item), schemas[item]);
+            db.model(_.upperFirst(item), schemas[item]);
         });
 
         autoNumber.init(db);
