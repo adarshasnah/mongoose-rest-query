@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-module.exports = function () {
+module.exports = function() {
 
     return {
         getQuery: getQuery
@@ -49,6 +49,11 @@ module.exports = function () {
             filter = {
                 $and: criterias
             };
+
+
+        //force null because of update in mongoose 4.6.7   
+        if (!populate)
+            populate = 'null';
 
         return {
             filter: filter,
