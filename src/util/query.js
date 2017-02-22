@@ -18,7 +18,7 @@ module.exports = function() {
 
         for (var field in query) {
 
-            if (_.indexOf(validKeys, field) > -1) {
+            /*if (_.indexOf(validKeys, field) > -1) {
 
                 if (_.isArray(query[field])) {
                     for (var x = 0; x < query[field].length; x++) {
@@ -27,22 +27,32 @@ module.exports = function() {
                 } else {
                     criterias.push(getCriteria(field, query[field]));
                 }
-            }
+            }*/
 
             if (field.toString().toLowerCase() == 'sort')
                 sort = getSort(query[field]);
 
-            if (field.toString().toLowerCase() == 'select')
+            else if (field.toString().toLowerCase() == 'select')
                 select = getSelect(query[field]);
 
-            if (field.toString().toLowerCase() == 'limit')
+            else if (field.toString().toLowerCase() == 'limit')
                 limit = parseInt(query[field]);
 
-            if (field.toString().toLowerCase() == 'skip')
+            else if (field.toString().toLowerCase() == 'skip')
                 skip = parseInt(query[field]);
 
-            if (field.toString().toLowerCase() == 'populate')
+            else if (field.toString().toLowerCase() == 'populate')
                 populate = query[field].replace(/,/g, " ");
+
+            else {
+                if (_.isArray(query[field])) {
+                    for (var x = 0; x < query[field].length; x++) {
+                        criterias.push(getCriteria(field, query[field][x]));
+                    }
+                } else {
+                    criterias.push(getCriteria(field, query[field]));
+                }
+            }
         }
 
         if (criterias.length > 0)
