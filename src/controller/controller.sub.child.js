@@ -69,11 +69,11 @@ module.exports = function (ModelName, subItemName, childName) {
 
         var Model = getModel(req);
 
-        var fieldsToSelect = getAutoIncrementFields(Model) + subItemName;
+        //var fieldsToSelect = getAutoIncrementFields(Model) + subItemName;
 
         Model
             .findById(req.params.id)
-            .select(fieldsToSelect)
+            //.select(fieldsToSelect)
             .exec(function (err, data) {
                 if (err)
                     res.status(500).send(err);
