@@ -109,6 +109,21 @@ module.exports = function() {
                 $lt: value.slice(1)
             };
 
+        else if (_.startsWith(value, '!='))
+           return {
+               $ne: value.slice(2)
+           };
+
+       else if (_.startsWith(value, '!in='))
+           return {
+               $nin: value.slice(4).split(',')
+           };
+
+       else if (_.startsWith(value, 'in='))
+           return {
+               $in: value.slice(3).split(',')
+           };
+
         else
             return (value.toLowerCase() == 'null') ? null : value;
 
