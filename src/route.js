@@ -13,6 +13,9 @@ module.exports = function (modelName) {
     router.route('/count')
         .get(mainController.count);
 
+    router.route('/aggregate')
+        .post(mainController.aggregate);
+
     router.route('/:id')
         .get(mainController.get)
         .put(mainController.update)

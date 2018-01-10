@@ -175,6 +175,24 @@ module.exports = function (ModelName) {
 
     };
 
+    var aggregate = function (req, res){
+
+        var Model = getModel(req);
+
+        Model
+            .aggregate(req.body)
+            .exec(function(err, data){
+
+                if (err)
+                    res.status(500).send(err);
+                else {
+                    res.send(data);
+                }
+
+            })
+
+    }
+
     return {
         list: list,
         count: count,
@@ -182,7 +200,8 @@ module.exports = function (ModelName) {
         get: get,
         update: update,
         deleteById: deleteById,
-        remove: remove
+        remove: remove,
+        aggregate: aggregate
     };
 
 };
