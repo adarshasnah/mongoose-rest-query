@@ -1,3 +1,5 @@
+var ObjectId = require('mongoose').Types.ObjectId;
+
 module.exports = function (ModelName) {
 
     var model = require('../util/model').model,
@@ -178,6 +180,7 @@ module.exports = function (ModelName) {
     var aggregate = function (req, res){
 
         var Model = getModel(req);
+        parse(req.body);
 
         Model
             .aggregate(req.body)
@@ -189,8 +192,24 @@ module.exports = function (ModelName) {
                     res.send(data);
                 }
 
-            })
+            });
 
+    }
+
+    function parse(obj) {
+
+        for (var key in obj) {
+ 
+            if (typeof obj[key] === 'object')
+                return parse(obj[key]);
+ 
+            else if (ObjectId.isValid(obj[key]))
+                obj[key] = new ObjectId(obj[key]);
+ 
+        }
+ 
+        return obj;
+ 
     }
 
     return {
