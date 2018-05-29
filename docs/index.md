@@ -52,6 +52,7 @@ app.listen(9000, () => {
 
 The above snippet automatically generates the following api endpoints
 
+```
 GET    http://localhost:9000/api/users -> List all users (subject to filter criteria) 
 POST   http://localhost:9000/api/users -> Create new user or users, can accept an object or array
 DELETE http://localhost:9000/api/users -> Delete all users (subject to filter criteria)
@@ -61,5 +62,6 @@ GET    http://localhost:9000/api/users/:id -> Get user by id (can apply populate
 PUT    http://localhost:9000/api/users/:id -> Update user by id (also accept partial object)
 DELETE http://localhost:9000/api/users/:id -> Delete user by id
 POST   http://localhost:9000/api/users/aggregate -> Accept mongo aggregrate pipelines as body for rich aggregation
+```
 
 
