@@ -27,7 +27,8 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     email: String,
     firstname: String,
-    lastname: String
+    lastname: String,
+    age: Number
 });
 
 const models = {
@@ -52,7 +53,6 @@ app.listen(9000, () => {
 
 The above snippet automatically generates the following api endpoints
 
-
 - GET    http://localhost:9000/api/users -> List all users (subject to filter criteria) 
 - POST   http://localhost:9000/api/users -> Create new user or users, can accept an object or array
 - DELETE http://localhost:9000/api/users -> Delete all users (subject to filter criteria)
@@ -62,5 +62,33 @@ The above snippet automatically generates the following api endpoints
 - DELETE http://localhost:9000/api/users/:id -> Delete user by id
 - POST   http://localhost:9000/api/users/aggregate -> Accept mongo aggregrate pipelines as body for rich aggregation
 
+## Query parameters
 
+In addition to the routes generated, certain endpoints also accept query parameters which provide a rich mechanism for filtering, sorting and paginating.
 
+- Filtering
+    - GET /api/users?email=adarsh@github.com  -> exact match
+    - GET /api/users?email=~adarsh  -> containing
+    - GET /api/users?age=>20  -> greater than 20
+    - GET /api/users?age=>=20  -> greater than or equal 20
+    - GET /api/users?age=<20  -> less than 20
+    - GET /api/users?age=<=20  -> less than or equal 20
+    - GET /api/users?age=>10&age=<=20  -> greater than 10 and less than or equal 20
+    - GET /api/users?age=!=20  -> not equal 20
+    - GET /api/users?age=!in=20,21,22  -> not equal 20, 21 or 22
+    - GET /api/users?age=in=20,21,22  -> equal 20, 21 or 22
+
+- Sorting
+    - GET /api/users?sort=email  -> sort by email asc
+    - GET /api/users?sort=-email  -> sort by email desc
+
+- Fields projection
+    - GET /api/users?select=email  -> return only email
+
+- Mongoose Populate
+    - GET /api/users?populate=referenceField  -> Populate the referencField
+
+- Pagination
+    - GET /api/users?limit=10  -> list only 10 users
+    - GET /api/users?limit=10&skip=0  -> list only first 10 users
+    - GET /api/users?limit=10&skip=10  -> list the 11th to 20th users
