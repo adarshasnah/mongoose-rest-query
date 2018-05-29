@@ -62,6 +62,8 @@ The above snippet automatically generates the following api endpoints
 - DELETE http://localhost:9000/api/users/:id -> Delete user by id
 - POST   http://localhost:9000/api/users/aggregate -> Accept mongo aggregrate pipelines as body for rich aggregation
 
+Note: additional crud routes are generated if the object contain a field which is of type array of objects
+
 ## Query parameters
 
 In addition to the routes generated, certain endpoints also accept query parameters which provide a rich mechanism for filtering, sorting and paginating.
@@ -92,3 +94,84 @@ In addition to the routes generated, certain endpoints also accept query paramet
     - GET /api/users?limit=10  -> list only 10 users
     - GET /api/users?limit=10&skip=0  -> list only first 10 users
     - GET /api/users?limit=10&skip=10  -> list the 11th to 20th users
+
+
+## Activating the multi database mode
+
+In order to use the multi db mode, we need to have a strategy to identify request in order to use the correct database. In the example below, an indentifier shall be used in the request header (x-client-id)
+
+Consider the following snippet
+
+```js
+const express = require('express');
+const mongoose = require('mongoose');
+const mrq = require('mongoose-rest-query')
+
+mongoose.Promise = global.Promise;
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+    email: String,
+    firstname: String,
+    lastname: String,
+    age: Number
+});
+
+const models = {
+    User: userSchema
+};
+
+mrq.config.modelSchemas = models;
+mrq.config.multiDB = true;
+
+const app = express();
+
+//middleware to check client id and set to correct db path
+app.use(function(req, res, next){
+
+    if(req.headers['x-client-id'] === 'client1')
+        req.headers['x-client-mongodb-path'] = 'mongodb://localhost/client1';
+    
+    else if(req.headers['x-client-id'] === 'client2')
+        req.headers['x-client-mongodb-path'] = 'mongodb://localhost/client2';
+    
+    else
+        res.status(401).send('Invalid client id');
+
+    next();
+});
+
+app.use(mrq.db);
+
+const restify = mrq.restify;
+
+app.use('/api/users', restify('User'));
+
+app.listen(9000, () => {
+    console.log('Server is listening on port 9000');
+});
+```
+
+
+## Accessing the mongoose model in a custom route
+
+
+```js
+
+app.get('/api/custom', function(req, res){
+
+    const User = mrq.model(req, 'User'); //this return the mongoose model
+
+    User.find(function(err, users){
+
+        if(err)
+            res.status(500).send(err);
+        else
+            res.send(users);
+    });
+
+});
+
+```
+
