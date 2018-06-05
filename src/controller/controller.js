@@ -1,4 +1,5 @@
 var ObjectId = require('mongoose').Types.ObjectId;
+var _ = require('lodash');
 
 module.exports = function (ModelName) {
 
@@ -95,12 +96,14 @@ module.exports = function (ModelName) {
 
         Model.findById(req.params.id, function (err, model) {
 
-            for (var p in req.body) {
+            /*for (var p in req.body) {
                 if (req.body[p] == 'null')
                     model[p] = null;
                 else
                     model[p] = req.body[p];
-            }
+            }*/
+
+            _.merge(model, req.body);
 
 
             model.save(function (err, data) {
