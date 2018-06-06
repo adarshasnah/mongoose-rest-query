@@ -103,8 +103,12 @@ module.exports = function (ModelName) {
                     model[p] = req.body[p];
             }*/
 
-            _.merge(model, req.body);
-
+            _.mergeWith(model, req.body, (objValue, srcValue) => {
+                if (_.isArray(objValue)) {
+                  return srcValue;
+                }
+            });          
+            
 
             model.save(function (err, data) {
                 if (err)
