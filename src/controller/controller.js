@@ -210,7 +210,7 @@ module.exports = function (ModelName) {
             if (typeof obj[key] === 'object')
                 return parse(obj[key]);
  
-            else if (ObjectId.isValid(obj[key]))
+            else if (typeof obj[key] === 'string' && ObjectId.isValid(obj[key]))
                 obj[key] = new ObjectId(obj[key]);
  
         }
