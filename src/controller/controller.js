@@ -1,5 +1,6 @@
 var ObjectId = require('mongoose').Types.ObjectId;
 var _ = require('lodash');
+var moment = require('moment');
 
 module.exports = function (ModelName) {
 
@@ -204,19 +205,24 @@ module.exports = function (ModelName) {
     }
 
     function parse(obj) {
-
+        
         for (var key in obj) {
- 
+    
             if (typeof obj[key] === 'object')
-                return parse(obj[key]);
- 
-            else if (typeof obj[key] === 'string' && ObjectId.isValid(obj[key]))
-                obj[key] = new ObjectId(obj[key]);
- 
+                obj[key] = parse(obj[key]);
+    
+            else if (typeof obj[key] === 'string'){
+
+                if (ObjectId.isValid(obj[key]))
+                    obj[key] = new ObjectId(obj[key]);
+
+                else if (moment(obj[key], 'YYYY-MM-DDTHH:mm:ss.SSSZ').isValid()) {
+                    obj[key] = moment(obj[key]).toDate();
+                }
+            }    
         }
- 
+        
         return obj;
- 
     }
 
     return {
