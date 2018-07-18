@@ -216,7 +216,7 @@ module.exports = function (ModelName) {
                 if (ObjectId.isValid(obj[key]))
                     obj[key] = new ObjectId(obj[key]);
 
-                else if (moment(obj[key], 'YYYY-MM-DDTHH:mm:ss.SSSZ').isValid()) {
+                else if (moment(obj[key], 'YYYY-MM-DDTHH:mm:ss.SSSZ', true).isValid()) {
                     obj[key] = moment(obj[key]).toDate();
                 }
             }    
