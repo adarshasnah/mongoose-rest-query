@@ -213,7 +213,7 @@ module.exports = function (ModelName) {
     
             else if (typeof obj[key] === 'string'){
 
-                if (ObjectId.isValid(obj[key]))
+                i if (ObjectId.isValid(obj[key]) && obj[key].length === 24)
                     obj[key] = new ObjectId(obj[key]);
 
                 else if (moment(obj[key], 'YYYY-MM-DDTHH:mm:ss.SSSZ', true).isValid()) {
