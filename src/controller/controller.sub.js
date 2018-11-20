@@ -96,11 +96,12 @@ module.exports = function (ModelName, subItemName) {
 
         if (_.isArray(req.body)) {
             for (var x = 0; x < req.body.length; x++) {
-                req.model[subItemName].push(req.body[x]);
+                req.model[subItemName] = req.model[subItemName].concat(req.body[x]);
             }
 
-        } else
-            req.model[subItemName].push(req.body);
+        } else            
+            req.model[subItemName] = req.model[subItemName].concat(req.body);
+            //req.model[subItemName].push(req.body);
 
         save(req, res, initalItemKeys);
     };
