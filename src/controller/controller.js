@@ -106,10 +106,10 @@ module.exports = function (ModelName) {
 
             _.mergeWith(model, req.body, (objValue, srcValue) => {
                 if (_.isArray(objValue)) {
-                  return srcValue;
+                    return srcValue;
                 }
-            });          
-            
+            });
+
 
             model.save(function (err, data) {
                 if (err)
@@ -185,14 +185,14 @@ module.exports = function (ModelName) {
 
     };
 
-    var aggregate = function (req, res){
+    var aggregate = function (req, res) {
 
         var Model = getModel(req);
         parse(req.body);
 
         Model
             .aggregate(req.body)
-            .exec(function(err, data){
+            .exec(function (err, data) {
 
                 if (err)
                     res.status(500).send(err);
@@ -205,13 +205,13 @@ module.exports = function (ModelName) {
     }
 
     function parse(obj) {
-        
+
         for (var key in obj) {
-    
+
             if (typeof obj[key] === 'object')
                 obj[key] = parse(obj[key]);
-    
-            else if (typeof obj[key] === 'string'){
+
+            else if (typeof obj[key] === 'string') {
 
                 if (ObjectId.isValid(obj[key]) && obj[key].length === 24)
                     obj[key] = new ObjectId(obj[key]);
@@ -219,10 +219,22 @@ module.exports = function (ModelName) {
                 else if (moment(obj[key], 'YYYY-MM-DDTHH:mm:ss.SSSZ', true).isValid()) {
                     obj[key] = moment(obj[key]).toDate();
                 }
-            }    
+            }
         }
-        
+
         return obj;
+    }
+
+    var bulkWrite = function (req, res) {
+
+        var Model = getModel(req);
+
+        var operations = req.body || [];
+
+        Model
+            .bulkWrite(operations)
+            .then(bulkWriteOpResult => res.send(bulkWriteOpResult))
+            .catch(e => res.status(500).send(e));
     }
 
     return {
@@ -233,7 +245,8 @@ module.exports = function (ModelName) {
         update: update,
         deleteById: deleteById,
         remove: remove,
-        aggregate: aggregate
+        aggregate: aggregate,
+        bulkWrite: bulkWrite
     };
 
 };
