@@ -1,4 +1,5 @@
 var ObjectId = require('mongoose').Types.ObjectId;
+var ServerResponse = require('http').ServerResponse;
 var _ = require('lodash');
 var moment = require('moment');
 
@@ -146,6 +147,42 @@ module.exports = function (ModelName) {
 
     };
 
+    var updateMany = async function (req, res) {
+
+        const Model = getModel(req);
+
+        const ids = req.body.map(doc => doc.id);
+
+        const docs = await Model
+            .find({ _id: { $in: ids } })
+            .catch(e => res.status(500).send(e));
+
+        if (docs instanceof ServerResponse) return null;
+
+        const savedDocs = [];
+
+        for (const doc of req.body) {
+            const model = docs.find(doc => doc._id.toString() === doc.id);
+
+            const body = _.omit(doc, 'id');
+
+            Object.assign(model, body);
+
+            Object.keys(body).forEach(field => model.markModified(field));
+
+            const response = await model
+                .save()
+                .catch(e => res.status(500).send(e));
+
+            if (response instanceof ServerResponse) return null;
+
+            savedDocs.push(model);
+        }
+
+        res.send(savedDocs);
+
+    }
+
     var deleteById = function (req, res) {
 
         var Model = getModel(req);
@@ -243,6 +280,7 @@ module.exports = function (ModelName) {
         create: create,
         get: get,
         update: update,
+        updateMany: updateMany,
         deleteById: deleteById,
         remove: remove,
         aggregate: aggregate,
