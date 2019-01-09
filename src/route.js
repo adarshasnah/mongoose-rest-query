@@ -16,6 +16,9 @@ module.exports = function (modelName) {
     router.route('/aggregate')
         .post(mainController.aggregate);
 
+    router.route('/bulkWrite')
+        .post(mainController.bulkWrite);
+
     router.route('/:id')
         .get(mainController.get)
         .put(mainController.update)

@@ -98,7 +98,7 @@ module.exports = function (ModelName, subItemName, childName) {
 
         if (_.isArray(req.body)) {
             for (var x = 0; x < req.body.length; x++) {
-                req.subItem[childName].push(req.body[x]);
+                req.subItem[childName] = req.subItem[childName].concat(req.body[x]);                
             }
 
         } else
