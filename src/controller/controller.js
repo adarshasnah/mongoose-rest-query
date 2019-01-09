@@ -161,10 +161,10 @@ module.exports = function (ModelName) {
 
         const savedDocs = [];
 
-        for (const doc of req.body) {
-            const model = docs.find(doc => doc._id.toString() === doc.id);
+        for (const document of req.body) {
+            const model = docs.find(doc => doc._id.toString() === document.id);
 
-            const body = _.omit(doc, 'id');
+            const body = _.omit(document, 'id');
 
             Object.assign(model, body);
 
