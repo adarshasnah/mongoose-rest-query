@@ -8,6 +8,7 @@ module.exports = function (modelName) {
     router.route('/')
         .get(mainController.list)
         .post(mainController.create)
+        .put(mainController.updateMany)
         .delete(mainController.remove);
 
     router.route('/count')
