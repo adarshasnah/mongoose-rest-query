@@ -268,8 +268,9 @@ module.exports = function (ModelName) {
 
         var operations = req.body || [];
 
-        Model
-            .bulkWrite(operations)
+        var bulkWrite = Model.bulkWrite || Model.collection.bulkWrite;
+
+        bulkWrite(operations)
             .then(bulkWriteOpResult => res.send(bulkWriteOpResult))
             .catch(e => res.status(500).send(e));
     }
