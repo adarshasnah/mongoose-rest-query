@@ -41,8 +41,12 @@ module.exports = function() {
             else if (field.toString().toLowerCase() == 'skip')
                 skip = parseInt(query[field]);
 
-            else if (field.toString().toLowerCase() == 'populate')
-                populate = query[field].replace(/,/g, " ");
+            else if (field.toString().toLowerCase() == 'populate'){
+                if(typeof query[field] == 'object')
+                    populate = query[field];
+                else
+                    populate = query[field].replace(/,/g, " ");
+            }
 
             else {
                 if (_.isArray(query[field])) {
