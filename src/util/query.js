@@ -125,7 +125,7 @@ module.exports = function() {
            };
 
         else
-            return (value.toLowerCase() == 'null') ? null : value;
+            return (value.toLowerCase && value.toLowerCase() === 'null') ? null : value;
 
     }
 
