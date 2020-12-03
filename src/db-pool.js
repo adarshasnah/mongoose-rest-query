@@ -10,7 +10,9 @@ module.exports = function() {
         var modelSchemas = require('./config').modelSchemas;
 
         Object.keys(modelSchemas).map(function(item) {
-            db.model(item, modelSchemas[item]);
+            var Model = db.model(item, modelSchemas[item]);
+
+            Model.syncIndexes && Model.syncIndexes();
         });
 
         autoNumber.init(db);
