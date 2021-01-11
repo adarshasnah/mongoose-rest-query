@@ -111,6 +111,7 @@ module.exports = function (ModelName) {
                 }
             });
 
+            Object.keys(req.body).forEach(model.markModified.bind(model));
 
             model.save(function (err, data) {
                 if (err)
