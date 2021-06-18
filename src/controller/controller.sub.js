@@ -9,6 +9,8 @@ module.exports = function (ModelName, subItemName) {
 
     function save(req, res, initalItemKeys, keysToReturn) {
         req.model.save(function (err, data) {
+            if (err)
+                return res.status(500).send(err);
 
             var result = [];
             var itemKeys = extractObjectIdFromList(data[subItemName]);
@@ -24,15 +26,10 @@ module.exports = function (ModelName, subItemName) {
                 }
             }
 
-            if (err)
-                res.status(500).send(err);
-            else {
-                if (result.length == 1)
-                    res.status(201).send(result[0]);
-                else
-                    res.status(201).send(result);
-            }
-
+            if (result.length == 1)
+                res.status(201).send(result[0]);
+            else
+                res.status(201).send(result);
         });
     }
 
@@ -99,9 +96,9 @@ module.exports = function (ModelName, subItemName) {
                 req.model[subItemName] = req.model[subItemName].concat(req.body[x]);
             }
 
-        } else            
+        } else
             req.model[subItemName] = req.model[subItemName].concat(req.body);
-            //req.model[subItemName].push(req.body);
+        //req.model[subItemName].push(req.body);
 
         save(req, res, initalItemKeys);
     };
