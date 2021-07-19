@@ -152,7 +152,9 @@ module.exports = function (ModelName) {
 
         const Model = getModel(req);
 
-        const ids = req.body.map(doc => doc.id || doc._id);
+        req.body.forEach(doc => doc._id && (doc.id = doc._id));
+
+        const ids = req.body.map(doc => doc.id);
 
         let docs;
         try { docs = await Model.find({ _id: { $in: ids } }) }
