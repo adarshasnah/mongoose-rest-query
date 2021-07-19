@@ -152,13 +152,16 @@ module.exports = function (ModelName) {
 
         const Model = getModel(req);
 
-        const ids = req.body.map(doc => doc.id);
+        const ids = req.body.map(doc => doc.id || doc._id);
 
-        const docs = await Model
-            .find({ _id: { $in: ids } })
-            .catch(e => res.status(500).send(e));
+        let docs;
+        try { docs = await Model.find({ _id: { $in: ids } }) }
+        catch (e) { return res.status(500).send(e) };
 
-        if (docs instanceof ServerResponse) return null;
+        if (docs instanceof ServerResponse)
+            return res
+                .status(500)
+                .send({ 'statusCode': docs.statusCode, 'statusMessage': docs.statusMessage });
 
         const savedDocs = [];
 
@@ -171,11 +174,14 @@ module.exports = function (ModelName) {
 
             Object.keys(body).forEach(field => model.markModified(field));
 
-            const response = await model
-                .save()
-                .catch(e => res.status(500).send(e));
+            let response;
+            try { response = await model.save() }
+            catch (e) { return res.status(500).send(e) };
 
-            if (response instanceof ServerResponse) return null;
+            if (response instanceof ServerResponse)
+                return res
+                    .status(500)
+                    .send({ 'statusCode': response.statusCode, 'statusMessage': response.statusMessage });
 
             savedDocs.push(model);
         }
