@@ -35,7 +35,7 @@ module.exports = function (ModelName, subItemName, childName) {
 
     function save(req, res, initalKeys, keysToReturn) {
 
-        req.model.save(function (err, data) {
+        req.model.save({ req }, function (err, data) {
             if (err)
                 return res.status(500).send(err);
 
@@ -135,7 +135,7 @@ module.exports = function (ModelName, subItemName, childName) {
             child[p] = req.body[p];
         }
 
-        req.model.save(function (err, updatedModel) {
+        req.model.save({ req }, function (err, updatedModel) {
 
             var subitem = updatedModel[subItemName].id(req.params.itemId);
             var child = subitem[childName].id(req.params.childId);
@@ -151,7 +151,7 @@ module.exports = function (ModelName, subItemName, childName) {
             _id: req.params.childId
         });
 
-        req.model.save(function (err, updatedModel) {
+        req.model.save({ req }, function (err, updatedModel) {
             res.send(updatedModel);
         });
 

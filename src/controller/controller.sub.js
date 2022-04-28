@@ -8,7 +8,7 @@ module.exports = function (ModelName, subItemName) {
     }
 
     function save(req, res, initalItemKeys, keysToReturn) {
-        req.model.save(function (err, data) {
+        req.model.save({ req }, function (err, data) {
             if (err)
                 return res.status(500).send(err);
 
@@ -115,7 +115,7 @@ module.exports = function (ModelName, subItemName) {
             item[p] = req.body[p];
         }
 
-        req.model.save(function (err, data) {
+        req.model.save({ req }, function (err, data) {
             if (err)
                 res.status(500).send(err);
             else

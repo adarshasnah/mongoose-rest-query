@@ -59,7 +59,7 @@ module.exports = function (ModelName) {
     var create = function (req, res) {
         var Model = getModel(req);
 
-        Model.create(req.body, function (err, data) {
+        Model.create(req.body, { req }, function (err, data) {
             if (err)
                 res.status(500).send(err);
             else
@@ -113,7 +113,7 @@ module.exports = function (ModelName) {
 
             Object.keys(req.body).forEach(model.markModified.bind(model));
 
-            model.save(function (err, data) {
+            model.save({ req }, function (err, data) {
                 if (err)
                     res.status(500).send(err);
                 else {
@@ -177,7 +177,7 @@ module.exports = function (ModelName) {
             Object.keys(body).forEach(field => model.markModified(field));
 
             let response;
-            try { response = await model.save() }
+            try { response = await model.save({ req }) }
             catch (e) { return res.status(500).send(e) };
 
             if (response instanceof ServerResponse)
